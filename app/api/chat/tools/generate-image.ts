@@ -12,9 +12,10 @@ export const generateImage = tool({
     prompt: z.string().describe("The detailed description of the image to generate."),
   }),
   // Explicitly type the destructured argument here to fix the 'any' inference error
-  execute: async ({ prompt }: { prompt: string }) => {
+  execute: async ({ prompt }: { prompt?: string }) => {
+    let promptText: string = prompt ?? "Default Prompt";
     try {
-      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
+      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. No text in the image.`;
       
       const response = await openai.images.generate({
         model: "dall-e-3",
