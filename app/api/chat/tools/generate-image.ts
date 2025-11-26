@@ -11,9 +11,9 @@ export const generateImage = tool({
   parameters: z.object({
     prompt: z.string().describe("The detailed description of the image to generate."),
   }),
-  execute: async ({ prompt }) => {
+  // Explicitly type the destructured argument here to fix the 'any' inference error
+  execute: async ({ prompt }: { prompt: string }) => {
     try {
-      // We inject brand constraints into the image prompt automatically
       const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
       
       const response = await openai.images.generate({
@@ -28,6 +28,7 @@ export const generateImage = tool({
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
+      console.error("Image generation failed:", error);
       return { error: "Failed to generate image." };
     }
   },
