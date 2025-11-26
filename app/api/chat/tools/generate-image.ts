@@ -7,16 +7,14 @@ const openai = new OpenAI({
 });
 
 export const generateImage = tool({
-  description: "Generate an image for event posters or social media backgrounds using DALL-E 3. Adheres to brand colors.",
+  description: "Generate an image for event posters or social media backgrounds using DALL-E 3.",
   parameters: z.object({
-    prompt: z.string().describe("The detailed description of the image to generate."),
+    prompt: z.string().describe("The description of the image."),
   }),
-  // FIX: We cast 'args' to 'any' to stop the TypeScript inference error.
-  execute: async (args: any) => {
-    const { prompt } = args;
-
+  // @ts-ignore
+  execute: async ({ prompt }) => {
     try {
-      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
+      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text.`;
       
       const response = await openai.images.generate({
         model: "dall-e-3",
@@ -30,10 +28,7 @@ export const generateImage = tool({
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
-      return { 
-        error: "Failed to generate image.",
-        details: error instanceof Error ? error.message : "Unknown error"
-      };
+      return { error: "Failed to generate image." };
     }
   },
 });
