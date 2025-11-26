@@ -4,7 +4,7 @@ import { MODEL } from '@/config';
 import { SYSTEM_PROMPT } from '@/prompts';
 import { isContentFlagged } from '@/lib/moderation';
 import { webSearch } from './tools/web-search';
-import { generateImage } from './tools/generate-image.ts';
+import { generateImage } from './tools/generate-image';
 import { vectorDatabaseSearch } from './tools/search-vector-database';
 
 export const maxDuration = 30;
