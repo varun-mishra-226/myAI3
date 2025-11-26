@@ -21,12 +21,14 @@ function getDateAndTime(): string {
 
 export const DATE_AND_TIME = getDateAndTime();
 
-export const AI_NAME = "Rocky";
-export const OWNER_NAME = "t0nt0n";
+export const AI_NAME = "CampusBrandAI";
+export const OWNER_NAME = "bitsOm Marketing Team";
 
-export const WELCOME_MESSAGE = `Hello! I'm ${AI_NAME}, an AI assistant created by ${OWNER_NAME}.`
+export const WELCOME_MESSAGE = `Hello! I'm ${AI_NAME}. 
+I can help you write social posts, event emails, and sponsor letters that are strictly aligned with our Brand Guidelines. 
+To get started, tell me what you are writing and who the audience is.`
 
-export const CLEAR_CHAT_TEXT = "New";
+export const CLEAR_CHAT_TEXT = "Start New Draft";
 
 export const MODERATION_DENIAL_MESSAGE_SEXUAL = "I can't discuss explicit sexual content. Please ask something else.";
 export const MODERATION_DENIAL_MESSAGE_SEXUAL_MINORS = "I can't discuss content involving minors in a sexual context. Please ask something else.";
@@ -43,5 +45,5 @@ export const MODERATION_DENIAL_MESSAGE_VIOLENCE = "I can't discuss violent conte
 export const MODERATION_DENIAL_MESSAGE_VIOLENCE_GRAPHIC = "I can't discuss graphic violent content. Please ask something else.";
 export const MODERATION_DENIAL_MESSAGE_DEFAULT = "Your message violates our guidelines. I can't answer that.";
 
-export const PINECONE_TOP_K = 40;
+export const PINECONE_TOP_K = 10;
 export const PINECONE_INDEX_NAME = "my-ai";
