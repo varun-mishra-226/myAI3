@@ -11,12 +11,11 @@ export const generateImage = tool({
   parameters: z.object({
     prompt: z.string().describe("The detailed description of the image to generate."),
   }),
-  execute: async (args) => {
-    // Destructure inside the function body to satisfy TypeScript inference
+  // FIX: We cast 'args' to 'any' to stop the TypeScript inference error.
+  execute: async (args: any) => {
     const { prompt } = args;
 
     try {
-      // Inject brand constraints
       const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
       
       const response = await openai.images.generate({
