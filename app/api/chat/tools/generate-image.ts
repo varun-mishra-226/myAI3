@@ -6,15 +6,20 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// 1. Define the schema explicitly
+const ImageGenerationSchema = z.object({
+  prompt: z.string().describe("The detailed description of the image to generate."),
+});
+
 export const generateImage = tool({
   description: "Generate an image for event posters or social media backgrounds using DALL-E 3. Adheres to brand colors.",
-  parameters: z.object({
-    prompt: z.string().describe("The detailed description of the image to generate."),
-  }),
-  // Explicitly type the destructured argument here to fix the 'any' inference error
-  execute: async ({ prompt }: { prompt: string }) => {
+  parameters: ImageGenerationSchema,
+  
+  // 2. Use z.infer to match the types perfectly
+  execute: async ({ prompt }: z.infer<typeof ImageGenerationSchema>) => {
     try {
-      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. No text in the image.`;
+      // Inject brand constraints
+      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
       
       const response = await openai.images.generate({
         model: "dall-e-3",
@@ -28,8 +33,10 @@ export const generateImage = tool({
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
-      console.error("Image generation failed:", error);
-      return { error: "Failed to generate image." };
+      // Return a safe error string if generation fails
+      return { 
+        error: "Failed to generate image. Please try again." 
+      };
     }
   },
 });
