@@ -1,34 +1,27 @@
-import type { Metadata } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Noto_Sans } from 'next/font/google';
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const notoSans = Noto_Sans({
+  subsets: ['latin'],
+  variable: '--font-noto-sans',
+  weight: ['300', '400', '500', '700'],
 });
 
 export const metadata: Metadata = {
-  title: "MyAI3",
-  description: "MyAI3",
+  title: 'CampusBrandAI | BITSoM Brand Copilot',
+  description:
+    'On-brand content assistant powered by BITSoM brand guidelines and AI.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="en" className={notoSans.variable}>
+      <body>{children}</body>
     </html>
   );
 }
