@@ -21,8 +21,8 @@ function getDateAndTime(): string {
 
 export const DATE_AND_TIME = getDateAndTime();
 
-export const AI_NAME = "CampusBrandAI";
-export const OWNER_NAME = "bitsOm Marketing Team";
+export const AI_NAME = "OnBrand";
+export const OWNER_NAME = "BITSoM";
 
 export const WELCOME_MESSAGE = `Hello! I'm ${AI_NAME}. 
 I can help you write social posts, event emails, and sponsor letters that are strictly aligned with our Brand Guidelines. 
