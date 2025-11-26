@@ -23,6 +23,11 @@ export const generateImage = tool({
         size: "1024x1024",
       });
 
+      // FIX: Explicitly check if data exists before accessing index 0
+      if (!response.data || !response.data[0]) {
+        throw new Error("No image data received from OpenAI.");
+      }
+
       return {
         imageUrl: response.data[0].url,
         revisedPrompt: response.data[0].revised_prompt,
