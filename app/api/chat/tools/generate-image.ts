@@ -12,8 +12,7 @@ export const generateImage = tool({
     prompt: z.string().describe("The detailed description of the image to generate."),
   }),
   // Explicitly type the destructured argument here to fix the 'any' inference error
-  execute: async ({ prompt }: { prompt?: string }) => {
-    let promptText: string = prompt ?? "Default Prompt";
+  execute: async ({ prompt }: { prompt: string }) => {
     try {
       const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. No text in the image.`;
       
