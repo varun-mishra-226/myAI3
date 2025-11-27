@@ -1,3 +1,4 @@
+// app/api/chat/tools/generate-image.ts
 import { tool } from "ai";
 import { z } from "zod";
 import OpenAI from "openai";
@@ -14,6 +15,7 @@ export const generateImage = tool({
   // @ts-ignore
   execute: async ({ prompt }) => {
     try {
+      // Injects brand constraints into every prompt
       const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text.`;
       
       const response = await openai.images.generate({
@@ -23,7 +25,7 @@ export const generateImage = tool({
         size: "1024x1024",
       });
 
-      // FIX: Explicitly check if data exists before accessing index 0
+      // Check for valid data before accessing
       if (!response.data || !response.data[0]) {
         throw new Error("No image data received from OpenAI.");
       }
@@ -33,7 +35,11 @@ export const generateImage = tool({
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
-      return { error: "Failed to generate image." };
+      console.error("Image generation failed:", error);
+      return { 
+        error: "Failed to generate image. Please try again later.",
+        details: error instanceof Error ? error.message : String(error)
+      };
     }
   },
 });
