@@ -4,6 +4,12 @@ import { ReasoningPart } from "./reasoning-part";
 import { ToolCall, ToolResult } from "./tool-call";
 
 export function AssistantMessage({ message, status, isLastMessage, durations, onDurationChange }: { message: UIMessage; status?: string; isLastMessage?: boolean; durations?: Record<string, number>; onDurationChange?: (key: string, duration: number) => void }) {
+
+    / SAFETY CHECK: If parts are missing or content is empty/loading
+    if (!message.parts || message.parts.length === 0) {
+        return <div className="animate-pulse text-gray-400 italic">Thinking...</div>;
+    }
+    
     return (
         <div className="w-full">
             <div className="text-sm flex flex-col gap-4">
