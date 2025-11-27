@@ -1,4 +1,3 @@
-// app/api/chat/tools/generate-image.ts
 import { tool } from "ai";
 import { z } from "zod";
 import OpenAI from "openai";
@@ -9,14 +8,22 @@ const openai = new OpenAI({
 
 export const generateImage = tool({
   description: "Generate an image for event posters or social media backgrounds using DALL-E 3.",
+  
+  // 1. THIS IS THE CRITICAL PART FOR OPENAI
+  // It must be a z.object({}) to avoid the 'type: None' error
   parameters: z.object({
-    prompt: z.string().describe("The description of the image."),
+    prompt: z.string().describe("The detailed description of the image to generate."),
   }),
-  // @ts-ignore
-  execute: async ({ prompt }) => {
+
+  // 2. THIS FIXES THE TYPESCRIPT ERROR
+  // We explicitly type the argument as 'any' to prevent the inference issues
+  // that were breaking your build earlier.
+  execute: async (args: any) => {
+    const { prompt } = args;
+
     try {
-      // Injects brand constraints into every prompt
-      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text.`;
+      // Inject brand constraints
+      const brandedPrompt = `${prompt}. Style: Minimalist, professional, academic. Colors: Deep Blue (#003366) and Gold (#FFCC00). No text in the image.`;
       
       const response = await openai.images.generate({
         model: "dall-e-3",
@@ -25,7 +32,7 @@ export const generateImage = tool({
         size: "1024x1024",
       });
 
-      // Check for valid data before accessing
+      // Safety check for the response data
       if (!response.data || !response.data[0]) {
         throw new Error("No image data received from OpenAI.");
       }
@@ -35,10 +42,10 @@ export const generateImage = tool({
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
-      console.error("Image generation failed:", error);
+      console.error("Image generation error:", error);
       return { 
-        error: "Failed to generate image. Please try again later.",
-        details: error instanceof Error ? error.message : String(error)
+        error: "Failed to generate image.", 
+        details: error instanceof Error ? error.message : "Unknown error"
       };
     }
   },
