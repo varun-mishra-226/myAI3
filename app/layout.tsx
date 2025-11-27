@@ -9,9 +9,9 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'CampusBrandAI | BITSoM Brand Copilot',
+  title: 'OnBrand | BITSoM Brand Copilot',
   description:
-    'On-brand content assistant powered by BITSoM brand guidelines and AI.',
+    'On-brand content assistant powered by BITSoM brand guidelines and AI',
 };
 
 export default function RootLayout({
