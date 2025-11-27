@@ -161,18 +161,13 @@ const isLoading = status === "submitted";
                   <div className="bitsom-message-bubble">
                     {m.role === 'user' ? (
                       <div className="whitespace-pre-wrap">
-                        {/* SAFETY CHECK: Use optional chaining (?.) and fallback to m.content */}
-                        {m.parts?.length > 0 ? (
-                            m.parts.map((part, index) => {
-                                if (part.type === 'text') {
-                                    return <span key={index}>{part.text}</span>;
-                                }
-                                return null;
-                            })
-                        ) : (
-                            // Fallback for older messages or simple text
-                            <span>{m.content}</span>
-                        )}
+                        {/* STRICT FIX: Only map through parts. Do not access m.content */}
+                        {m.parts?.map((part, index) => {
+                            if (part.type === 'text') {
+                                return <span key={index}>{part.text}</span>;
+                            }
+                            return null;
+                        })}
                       </div>
                     ) : (
                       <AssistantMessage 
