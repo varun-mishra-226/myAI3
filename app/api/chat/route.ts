@@ -67,7 +67,6 @@ export async function POST(req: Request) {
         tools: {
             webSearch,
             vectorDatabaseSearch,
-            generateImage,
         },
         stopWhen: stepCountIs(10),
         providerOptions: {
