@@ -143,7 +143,7 @@ const isLoading = status === "submitted";
             </div>
           ) : (
             <div className="bitsom-messages">
-              {messages.map((m) => (
+              {messages.map((m, i) => (
                 <div
                   key={m.id}
                   className={
@@ -157,13 +157,21 @@ const isLoading = status === "submitted";
                       {m.role === 'user' ? 'You' : 'Brand AI'}
                     </span>
                   </div>
+            
                   <div className="bitsom-message-bubble">
                     {m.role === 'user' ? (
-                      // User messages are simple text
-                      <div className="whitespace-pre-wrap">{m.content}</div>
+                      // FIX: Loop through parts to get user text (Fixes 'content does not exist' error)
+                      <div className="whitespace-pre-wrap">
+                        {m.parts.map((part, index) => {
+                          if (part.type === 'text') {
+                            return <span key={index}>{part.text}</span>;
+                          }
+                          // If you eventually add image uploads for users, handle them here
+                          return null;
+                        })}
+                      </div>
                     ) : (
-                      // Assistant messages use the smart component
-                      // This handles Markdown AND Images automatically
+                      // Assistant Message handles Markdown & Tools (Images)
                       <AssistantMessage 
                          message={m} 
                          isLastMessage={i === messages.length - 1} 
