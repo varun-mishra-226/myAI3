@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { useChat } from '@ai-sdk/react';
+import { AssistantMessage } from '@/components/messages/assistant-message';
 type QuickAction = {
   label: string;
   prompt: string;
@@ -157,13 +158,18 @@ const isLoading = status === "submitted";
                     </span>
                   </div>
                   <div className="bitsom-message-bubble">
-                    {m.parts?.map((part, index) => {
-                      if (part.type === 'text') {
-                        return <span key={index}>{part.text}</span>;
-                      }
-                      // You can handle other part types (reasoning, tool, etc.) here if needed
-                      return null;
-                    })}
+                    {m.role === 'user' ? (
+                      // User messages are simple text
+                      <div className="whitespace-pre-wrap">{m.content}</div>
+                    ) : (
+                      // Assistant messages use the smart component
+                      // This handles Markdown AND Images automatically
+                      <AssistantMessage 
+                         message={m} 
+                         isLastMessage={i === messages.length - 1} 
+                         status={status}
+                      />
+                    )}
                   </div>
                 </div>
               ))}
