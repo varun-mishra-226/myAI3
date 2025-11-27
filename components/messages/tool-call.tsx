@@ -106,3 +106,25 @@ export function ToolResult({ part }: { part: ToolResultPart }) {
       return (
         <div className="my-3">
             <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-gray-200 shadow-md">
+                <img 
+                  src={result.imageUrl} 
+                  alt="Generated Content" 
+                  className="w-full h-auto object-cover" 
+                />
+            </div>
+            <p className="text-xs text-gray-400 mt-1 italic">
+               Prompt: {result.revisedPrompt?.slice(0, 60)}...
+            </p>
+        </div>
+      );
+    }
+  }
+
+  // --- DEFAULT RENDERING ---
+  return (
+    <div className="flex items-center gap-2 py-1 text-sm text-gray-600">
+      {toolDisplay.result_icon}
+      <span className="font-medium">{toolDisplay.result_label}</span>
+    </div>
+  );
+}
