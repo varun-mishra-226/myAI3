@@ -31,6 +31,7 @@ SAFETY & COMPLIANCE:
 `;
 
 export const CITATIONS_PROMPT = `
+- When you use a Brand Guideline from the database, mention it briefly.
 - Always cite your sources using inline markdown, e.g., [Source #](Source URL).
 - Do not ever just use [Source #] by itself and not provide the URL as a markdown link-- this is forbidden.
 `;
@@ -39,31 +40,18 @@ export const COURSE_CONTEXT_PROMPT = `
 - Most basic questions about the course can be answered by reading the syllabus.
 `;
 
-export const SYSTEM_PROMPT = `
-${IDENTITY_PROMPT}
-
-<tool_calling>
-${TOOL_CALLING_PROMPT}
-</tool_calling>
-
-<tone_style>
-${TONE_STYLE_PROMPT}
-</tone_style>
-
-<guardrails>
-${GUARDRAILS_PROMPT}
-</guardrails>
-
-<citations>
-${CITATIONS_PROMPT}
-</citations>
-
-<course_context>
-${COURSE_CONTEXT_PROMPT}
-</course_context>
-
-<date_time>
-${DATE_AND_TIME}
-</date_time>
+export const FORMATTING_PROMPT = `
+**OUTPUT FORMATTING:**
+- Do NOT wrap your response in a code block (triple backticks). 
+- Use standard Markdown formatting (Bold for emphasis, Lists for bullet points, Headers for sections).
+- The user's interface will render this Markdown into beautiful HTML automatically.
 `;
 
+export const SYSTEM_PROMPT = `
+${IDENTITY_PROMPT}
+${TONE_STYLE_PROMPT}
+${GUARDRAILS_PROMPT}
+${TOOL_CALLING_PROMPT}
+${FORMATTING_PROMPT}
+${CITATIONS_PROMPT}
+`;
