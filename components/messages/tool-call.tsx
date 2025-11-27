@@ -92,6 +92,32 @@ export function ToolCall({ part }: { part: ToolCallPart }) {
 export function ToolResult({ part }: { part: ToolResultPart }) {
     const { output } = part;
     const toolName = extractToolName(part);
+
+    // --- IMAGE RENDERING LOGIC ---
+    if (toolName === 'generateImage') {
+      if (result?.error) {
+          // Render error message
+          return <div className="text-red-500">❌ {result.error}</div>;
+      }
+      if (result?.imageUrl) {
+        // Render the actual image
+        return (
+          <div className="my-3">
+              <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-gray-200 shadow-md">
+                  <img 
+                    src={result.imageUrl} 
+                    alt="Generated Content" 
+                    className="w-full h-auto object-cover" 
+                  />
+              </div>
+              <p className="text-xs text-gray-400 mt-1 italic">
+                  Prompt: {result.revisedPrompt?.slice(0, 60)}...
+              </p>
+          </div>
+        );
+      }
+    }
+    
     const toolDisplay = toolName ? (TOOL_DISPLAY_MAP[toolName] || DEFAULT_TOOL_DISPLAY) : DEFAULT_TOOL_DISPLAY;
 
     const input = 'input' in part ? part.input : undefined;
