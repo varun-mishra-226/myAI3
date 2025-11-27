@@ -53,7 +53,7 @@ const isLoading = status === "submitted";
           <div className="bitsom-logo-block">
             <div className="bitsom-logo-wrapper">
               <Image
-                src="/bitsom-logo.png"
+                src="/bitsom-logo.jpg"
                 alt="BITSoM logo"
                 width={72}
                 height={96}
