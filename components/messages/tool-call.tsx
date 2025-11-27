@@ -1,130 +1,113 @@
 import { ToolCallPart, ToolResultPart } from "ai";
-import { Globe, Search, Wrench, Image as ImageIcon } from "lucide-react";
+import { Book, Globe, Search, Presentation, Wrench } from "lucide-react";
 import { Shimmer } from "../ai-elements/shimmer";
 
-// --- Types ---
 export interface ToolDisplay {
-  call_label: string;
-  call_icon: React.ReactNode;
-  result_label: string;
-  result_icon: React.ReactNode;
-  formatArgs?: (toolName: string, input: unknown) => string;
+    call_label: string;
+    call_icon: React.ReactNode;
+    result_label: string;
+    result_icon: React.ReactNode;
+    formatArgs?: (toolName: string, input: unknown) => string;
 };
 
-// --- Helper Functions ---
 function formatWebSearchArgs(_: string, input: unknown): string {
-  try {
-    if (typeof input !== 'object' || input === null) return "";
-    const args = input as Record<string, unknown>;
-    return args.query ? String(args.query) : "";
-  } catch { return ""; }
+    try {
+        if (typeof input !== 'object' || input === null) {
+            return "";
+        }
+        const args = input as Record<string, unknown>;
+        return args.query ? String(args.query) : "";
+    } catch {
+        return "";
+    }
 }
 
-function formatImageGenArgs(_: string, input: unknown): string {
-  try {
-    if (typeof input !== 'object' || input === null) return "";
-    const args = input as Record<string, unknown>;
-    return args.prompt ? `"${String(args.prompt).slice(0, 30)}..."` : "";
-  } catch { return ""; }
-}
-
-// --- Configuration Map ---
 const TOOL_DISPLAY_MAP: Record<string, ToolDisplay> = {
-  webSearch: {
-    call_label: "Searching...",
-    call_icon: <Search className="w-4 h-4" />,
-    result_label: "Searched Web",
-    result_icon: <Globe className="w-4 h-4 text-blue-500" />,
-    formatArgs: formatWebSearchArgs,
-  },
-  generateImage: {
-    call_label: "Designing image...",
-    call_icon: <ImageIcon className="w-4 h-4" />,
-    result_label: "Image Generated",
-    result_icon: <ImageIcon className="w-4 h-4 text-green-600" />,
-    formatArgs: formatImageGenArgs,
-  },
+    webSearch: {
+        call_label: "Searching the web",
+        call_icon: <Search className="w-4 h-4" />,
+        result_label: "Searched the web",
+        result_icon: <Search className="w-4 h-4" />,
+        formatArgs: formatWebSearchArgs,
+    },
 };
 
-const DEFAULT_TOOL_DISPLAY: ToolDisplay = { 
-  call_label: "Using tool", 
-  call_icon: <Wrench className="w-4 h-4" />, 
-  result_label: "Tool Finished", 
-  result_icon: <Wrench className="w-4 h-4" /> 
-};
+const DEFAULT_TOOL_DISPLAY: ToolDisplay = { call_label: "Using tool", call_icon: <Wrench className="w-4 h-4" />, result_label: "Used tool", result_icon: <Wrench className="w-4 h-4" /> };
 
-// --- Utility Functions ---
 function extractToolName(part: ToolCallPart | ToolResultPart): string | undefined {
-  // 1. Check for explicit toolName property FIRST
-  if ('toolName' in part && part.toolName) return part.toolName;
-  
-  // 2. Fallback to type slicing
-  const partWithType = part as unknown as { type?: string };
-  if (partWithType.type && partWithType.type.startsWith("tool-")) {
-    return partWithType.type.slice(5);
-  }
-  return undefined;
+    const partWithType = part as unknown as { type?: string; toolName?: string };
+    if (partWithType.type && partWithType.type.startsWith("tool-")) {
+        return partWithType.type.slice(5);
+    }
+    if (partWithType.toolName) {
+        return partWithType.toolName;
+    }
+    if ('toolName' in part && part.toolName) {
+        return part.toolName;
+    }
+    return undefined;
 }
 
 function formatToolArguments(toolName: string, input: unknown, toolDisplay?: ToolDisplay): string {
-  if (toolDisplay?.formatArgs) return toolDisplay.formatArgs(toolName, input);
-  return "";
+    if (toolDisplay?.formatArgs) {
+        return toolDisplay.formatArgs(toolName, input);
+    }
+
+    try {
+        if (typeof input !== 'object' || input === null) {
+            return String(input);
+        }
+
+        const args = input as Record<string, unknown>;
+        if (args.query) {
+            return String(args.query);
+        }
+        return "Arguments not available";
+    } catch {
+        return "Arguments not available";
+    }
 }
 
-// --- Components ---
-
 export function ToolCall({ part }: { part: ToolCallPart }) {
-  const { input } = part;
-  const toolName = extractToolName(part);
-  const toolDisplay = toolName ? (TOOL_DISPLAY_MAP[toolName] || DEFAULT_TOOL_DISPLAY) : DEFAULT_TOOL_DISPLAY;
-  const formattedArgs = formatToolArguments(toolName || "", input, toolDisplay);
+    const { input } = part;
+    const toolName = extractToolName(part);
+    const toolDisplay = toolName ? (TOOL_DISPLAY_MAP[toolName] || DEFAULT_TOOL_DISPLAY) : DEFAULT_TOOL_DISPLAY;
+    const formattedArgs = formatToolArguments(toolName || "", input, toolDisplay);
 
-  return (
-    <div className="flex items-center gap-2 py-1 text-sm text-gray-500">
-      {toolDisplay.call_icon}
-      <Shimmer duration={1.5} className="font-medium">{toolDisplay.call_label}</Shimmer>
-      <span className="opacity-50 truncate max-w-[200px]">{formattedArgs}</span>
-    </div>
-  );
+    return (
+        <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-muted-foreground shrink-0">
+                {toolDisplay.call_icon}
+                <Shimmer duration={1}>{toolDisplay.call_label}</Shimmer>
+            </div>
+            {toolDisplay.formatArgs && formattedArgs && (
+                <span className="text-muted-foreground/75 flex-1 min-w-0 truncate">
+                    {formattedArgs}
+                </span>
+            )}
+        </div >
+    );
 }
 
 export function ToolResult({ part }: { part: ToolResultPart }) {
-  // FIX: Safely extract 'result' regardless of TypeScript strictness
-  const anyPart = part as any;
-  const result = anyPart.result || anyPart.output; 
+    const { output } = part;
+    const toolName = extractToolName(part);
+    const toolDisplay = toolName ? (TOOL_DISPLAY_MAP[toolName] || DEFAULT_TOOL_DISPLAY) : DEFAULT_TOOL_DISPLAY;
 
-  const toolName = extractToolName(part);
-  const toolDisplay = toolName ? (TOOL_DISPLAY_MAP[toolName] || DEFAULT_TOOL_DISPLAY) : DEFAULT_TOOL_DISPLAY;
+    const input = 'input' in part ? part.input : undefined;
+    const formattedArgs = input !== undefined ? formatToolArguments(toolName || "", input, toolDisplay) : "";
 
-  // --- IMAGE RENDERING ---
-  if (toolName === 'generateImage') {
-    if (result?.error) {
-       return <div className="text-red-500 text-sm">❌ {result.error}</div>;
-    }
-    // Check if result exists and has imageUrl
-    if (result?.imageUrl) {
-      return (
-        <div className="my-3">
-            <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-gray-200 shadow-md">
-                <img 
-                  src={result.imageUrl} 
-                  alt="Generated Content" 
-                  className="w-full h-auto object-cover" 
-                />
+    return (
+        <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-muted-foreground shrink-0">
+                {toolDisplay.result_icon}
+                <span>{toolDisplay.result_label}</span>
             </div>
-            <p className="text-xs text-gray-400 mt-1 italic">
-               Prompt: {result.revisedPrompt?.slice(0, 60)}...
-            </p>
+            {toolDisplay.formatArgs && formattedArgs && (
+                <span className="text-muted-foreground/75 flex-1 min-w-0 truncate">
+                    {formattedArgs}
+                </span>
+            )}
         </div>
-      );
-    }
-  }
-
-  // --- DEFAULT RENDERING ---
-  return (
-    <div className="flex items-center gap-2 py-1 text-sm text-gray-600">
-      {toolDisplay.result_icon}
-      <span className="font-medium">{toolDisplay.result_label}</span>
-    </div>
-  );
-}
+    );
+}   
