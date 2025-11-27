@@ -162,13 +162,18 @@ const isLoading = status === "submitted";
                     {m.role === 'user' ? (
                       // FIX: Loop through parts to get user text (Fixes 'content does not exist' error)
                       <div className="whitespace-pre-wrap">
-                        {m.parts.map((part, index) => {
-                          if (part.type === 'text') {
-                            return <span key={index}>{part.text}</span>;
-                          }
-                          // If you eventually add image uploads for users, handle them here
-                          return null;
-                        })}
+                        {m.parts?.length > 0 ? (
+                          {m.parts.map((part, index) => {
+                            if (part.type === 'text') {
+                              return <span key={index}>{part.text}</span>;
+                            }
+                            // If you eventually add image uploads for users, handle them here
+                            return null;
+                          })
+                          ) : (
+                            // Fallback for older messages or simple text
+                            <span>{m.content}</span>
+                        )}
                       </div>
                     ) : (
                       // Assistant Message handles Markdown & Tools (Images)
